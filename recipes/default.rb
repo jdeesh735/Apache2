@@ -203,7 +203,11 @@ service 'apache2' do
   service_name node['apache']['service_name']
   case node['platform_family']
   when 'rhel'
-    reload_command '/sbin/service httpd graceful'
+    if node['platform_version'].to_i == 7
+      reload_command '/usr/sbin/apachectl graceful'
+    else
+      reload_command '/sbin/service httpd graceful'
+    end
   when 'debian'
     provider Chef::Provider::Service::Debian
   when 'arch'
